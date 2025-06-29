@@ -1,5 +1,6 @@
 ﻿using BizCard.Features.User.DTOs;
 using BizCard.Shared.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -17,6 +18,7 @@ namespace BizCard.Features.User
             _userService = userService;
         }
 
+        [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
@@ -47,8 +49,18 @@ namespace BizCard.Features.User
         [HttpPost("SignUp")]
         public async Task<IActionResult> PostSignUp([FromForm] SignUpDTO signUpDTO)
         {
-
-            string token = await _userService.SignUp(new User() { Id = new Guid().ToString(), Email = signUpDTO.Email, UserName = signUpDTO.username, PhoneNumber = signUpDTO.Phone, FullName = signUpDTO.FullName, RoleName = signUpDTO.RoleName }, signUpDTO.password);
+            string token = await _userService.SignUp(
+                new User()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Email = signUpDTO.Email,
+                    UserName = signUpDTO.username,
+                    PhoneNumber = signUpDTO.Phone,
+                    FullName = signUpDTO.FullName,
+                    RoleName = signUpDTO.RoleName
+                },
+                signUpDTO.password
+            );
             return Ok(token);
         }
     }

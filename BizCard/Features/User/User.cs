@@ -6,6 +6,9 @@ namespace BizCard.Features.User
     public class User : IdentityUser
     {
         public override string UserName { get; set; }
+
+        public override string Email { get; set; }
+
         public string FullName { get; set; }
 
         public string RoleName { get; set; }

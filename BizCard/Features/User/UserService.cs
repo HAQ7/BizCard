@@ -39,6 +39,15 @@ namespace BizCard.Features.User
 
         public async Task<string> SignUp(User user, string password)
         {
+
+            User? existingEmailUser = await _userManager.FindByEmailAsync(user.Email);
+            if (existingEmailUser != null)
+            {
+                throw new HTTPException(400, "Email " + user.Email + " is already taken.");
+            }
+
+
+
             IdentityResult result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {

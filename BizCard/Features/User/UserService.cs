@@ -67,5 +67,15 @@ namespace BizCard.Features.User
             return user;
 
         }
+
+        public async Task<User> GetUserByUsername(string username)
+        {
+            User? user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                throw new HTTPException(404, "User not found");
+            }
+            return user;
+        }
     }
 }

@@ -8,5 +8,7 @@
 
         public Task<User> GetUser(string Id);
 
+        public Task<User> GetUserByUsername(string username);
+
     }
 }

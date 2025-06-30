@@ -5,7 +5,7 @@ namespace BizCard.Features.Card
     public class Card
     {
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string DisplayName { get; set; }
 
@@ -19,7 +19,7 @@ namespace BizCard.Features.Card
 
         public string? PhoneNumber { get; set; }
 
-        public string? linkedIn { get; set; }
+        public string? LinkedIn { get; set; }
 
         public string? X { get; set; }
 

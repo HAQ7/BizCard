@@ -6,8 +6,8 @@ using System.Security.Claims;
 
 namespace BizCard.Features.User
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [TypeFilter(typeof(ExceptionFilter))]
     public class UserController : ControllerBase
     {

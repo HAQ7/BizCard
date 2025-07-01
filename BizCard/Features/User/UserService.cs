@@ -1,6 +1,7 @@
 ﻿using BizCard.Features.JWT;
 using BizCard.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BizCard.Features.User
 {
@@ -9,12 +10,14 @@ namespace BizCard.Features.User
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IJWTService _jwtService;
+        private readonly AppDBcontext _db;
 
-        public UserService(SignInManager<User> signInManager, UserManager<User> userManager, IJWTService jwtService)
+        public UserService(SignInManager<User> signInManager, UserManager<User> userManager, IJWTService jwtService, AppDBcontext db)
         {
             _jwtService = jwtService;
             _signInManager = signInManager;
             _userManager = userManager;
+            _db = db;
         }
 
         public async Task<string> Login(string username, string password)
@@ -57,9 +60,13 @@ namespace BizCard.Features.User
             return _jwtService.genarateJWTToken(user);
         }
 
-        public async Task<User> GetUser(string Id)
+        public async Task<User> GetUser(string userId)
         {
-            User? user = await _userManager.FindByIdAsync(Id);
+            User? user = await _db.Users
+                .Include(u => u.MainCard)
+                .Include(u => u.Cards)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
             if (user == null)
             {
                 throw new HTTPException(404, "User not found");
@@ -70,7 +77,11 @@ namespace BizCard.Features.User
 
         public async Task<User> GetUserByUsername(string username)
         {
-            User? user = await _userManager.FindByNameAsync(username);
+            User? user = await _db.Users
+                .Include(u => u.MainCard)
+                .Include(u => u.Cards)
+                .FirstOrDefaultAsync(u => u.UserName == username);
+
             if (user == null)
             {
                 throw new HTTPException(404, "User not found");

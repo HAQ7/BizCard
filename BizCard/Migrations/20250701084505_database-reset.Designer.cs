@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BizCard.Migrations
 {
     [DbContext(typeof(AppDBcontext))]
-    [Migration("20250629173716_email-not-null")]
-    partial class emailnotnull
+    [Migration("20250701084505_database-reset")]
+    partial class databasereset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,9 +26,8 @@ namespace BizCard.Migrations
 
             modelBuilder.Entity("BizCard.Features.Card.Card", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BGColor")
                         .IsRequired()
@@ -47,6 +46,13 @@ namespace BizCard.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LinkedIn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -57,18 +63,12 @@ namespace BizCard.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("X")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("linkedIn")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Cards");
                 });
@@ -103,8 +103,8 @@ namespace BizCard.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("MainCardId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("MainCardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -288,16 +288,21 @@ namespace BizCard.Migrations
 
             modelBuilder.Entity("BizCard.Features.Card.Card", b =>
                 {
-                    b.HasOne("BizCard.Features.User.User", null)
+                    b.HasOne("BizCard.Features.User.User", "Owner")
                         .WithMany("Cards")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("BizCard.Features.User.User", b =>
                 {
                     b.HasOne("BizCard.Features.Card.Card", "MainCard")
                         .WithMany()
-                        .HasForeignKey("MainCardId");
+                        .HasForeignKey("MainCardId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("MainCard");
                 });

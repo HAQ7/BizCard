@@ -1,6 +1,7 @@
 ﻿
 using BizCard.Features.User;
 using BizCard.Shared.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BizCard.Features.Card
 {
@@ -26,7 +27,7 @@ namespace BizCard.Features.Card
 
         public async Task<Card> GetCard(string cardId)
         {
-            Card card = await _db.FindAsync<Card>(cardId);
+            Card card = await _db.Cards.Include(c => c.Owner).FirstOrDefaultAsync(c => c.Id == cardId);
 
             if (card == null)
             {
@@ -76,6 +77,15 @@ namespace BizCard.Features.Card
                 user.MainCard = card;
             }
 
+            if (user.Cards == null)
+            {
+                user.Cards = [card];
+            }
+            else
+            {
+                user.Cards.Add(card);
+            }
+
             await _db.SaveChangesAsync();
 
             return card.Id;
@@ -95,6 +105,11 @@ namespace BizCard.Features.Card
             updatedCard.X = card.X;
             updatedCard.CustomURL = card.CustomURL;
             updatedCard.CustomURLName = card.CustomURLName;
+
+            if (isMain)
+            {
+                updatedCard.Owner.MainCard = updatedCard;
+            }
 
             await _db.SaveChangesAsync();
 

@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace BizCard.Features.Card
+﻿namespace BizCard.Features.User.DTOs
 {
-    public class Card
+    public class UserCardDTO
     {
-        [Key]
         public string Id { get; set; }
 
         public string DisplayName { get; set; }
@@ -27,11 +23,5 @@ namespace BizCard.Features.Card
         public string? CustomURLName { get; set; }
 
         public string? CustomURL { get; set; }
-
-        [ForeignKey(nameof(Owner))]
-        public string OwnerId { get; set; }
-
-        public User.User Owner { get; set; }
-
     }
 }

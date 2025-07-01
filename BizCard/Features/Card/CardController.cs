@@ -1,4 +1,5 @@
 ﻿using BizCard.Features.Card.DTOs;
+using BizCard.Shared.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -7,6 +8,8 @@ namespace BizCard.Features.Card
 {
     [Route("api/[controller]")]
     [ApiController]
+    [TypeFilter(typeof(ExceptionFilter))]
+
     public class CardController : ControllerBase
     {
         private readonly ICardService _cardService;
@@ -17,9 +20,35 @@ namespace BizCard.Features.Card
         }
 
         [HttpGet("{cardId}")]
-        public async Task<IActionResult> GetCard(string cardId)
+        public async Task<IActionResult> GetCard([FromRoute] string cardId)
         {
-            return Ok(await _cardService.GetCard(cardId));
+            Card card = await _cardService.GetCard(cardId);
+
+            CardDTO cardDto = new CardDTO
+            {
+                Id = card.Id,
+                DisplayName = card.DisplayName,
+                RoleName = card.RoleName,
+                BGColor = card.BGColor,
+                TextColor = card.TextColor,
+                Email = card.Email,
+                PhoneNumber = card.PhoneNumber,
+                LinkedIn = card.LinkedIn,
+                X = card.X,
+                CustomURLName = card.CustomURLName,
+                CustomURL = card.CustomURL,
+                Owner = new OwnerDTO
+                {
+                    Id = card.Owner.Id,
+                    UserName = card.Owner.UserName,
+                    Email = card.Owner.Email,
+                    FullName = card.Owner.FullName,
+                    RoleName = card.Owner.RoleName,
+                    PhoneNumber = card.Owner.PhoneNumber
+                }
+            };
+
+            return Ok(cardDto);
         }
 
         [HttpGet("cards")]
@@ -28,19 +57,71 @@ namespace BizCard.Features.Card
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // should not be possible, but just in case.
             if (userId == null)
             {
                 return NotFound("User not found");
             }
 
-            return Ok(await _cardService.GetCards(userId));
+            ICollection<Card> cards = await _cardService.GetCards(userId);
+
+            List<CardDTO> cardDtos = cards.Select(card => new CardDTO
+            {
+                Id = card.Id,
+                DisplayName = card.DisplayName,
+                RoleName = card.RoleName,
+                BGColor = card.BGColor,
+                TextColor = card.TextColor,
+                Email = card.Email,
+                PhoneNumber = card.PhoneNumber,
+                LinkedIn = card.LinkedIn,
+                X = card.X,
+                CustomURLName = card.CustomURLName,
+                CustomURL = card.CustomURL,
+                Owner = new OwnerDTO
+                {
+                    Id = card.Owner.Id,
+                    UserName = card.Owner.UserName,
+                    Email = card.Owner.Email,
+                    FullName = card.Owner.FullName,
+                    RoleName = card.Owner.RoleName,
+                    PhoneNumber = card.Owner.PhoneNumber
+                }
+            }).ToList();
+
+            return Ok(cardDtos);
         }
 
         [HttpGet("main/{username}")]
         public async Task<IActionResult> GetMainCard(string username)
         {
-            return Ok(await _cardService.GetMainCard(username));
+            Card card = await _cardService.GetMainCard(username);
+
+
+            CardDTO cardDto = new CardDTO
+            {
+                Id = card.Id,
+                DisplayName = card.DisplayName,
+                RoleName = card.RoleName,
+                BGColor = card.BGColor,
+                TextColor = card.TextColor,
+                Email = card.Email,
+                PhoneNumber = card.PhoneNumber,
+                LinkedIn = card.LinkedIn,
+                X = card.X,
+                CustomURLName = card.CustomURLName,
+                CustomURL = card.CustomURL,
+                Owner = new OwnerDTO
+                {
+                    Id = card.Owner.Id,
+                    UserName = card.Owner.UserName,
+                    Email = card.Owner.Email,
+                    FullName = card.Owner.FullName,
+                    RoleName = card.Owner.RoleName,
+                    PhoneNumber = card.Owner.PhoneNumber
+                }
+            };
+
+            return Ok(cardDto);
         }
 
         [HttpPost]

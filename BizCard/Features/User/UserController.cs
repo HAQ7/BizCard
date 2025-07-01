@@ -35,7 +35,55 @@ namespace BizCard.Features.User
                 return NotFound("User not found");
             }
 
-            return Ok(user);
+            // Map user's cards to CardDTOs
+            List<UserCardDTO>? cardDTOs = user.Cards?.Select(card => new UserCardDTO
+            {
+                Id = card.Id,
+                DisplayName = card.DisplayName,
+                RoleName = card.RoleName,
+                BGColor = card.BGColor,
+                TextColor = card.TextColor,
+                Email = card.Email,
+                PhoneNumber = card.PhoneNumber,
+                LinkedIn = card.LinkedIn,
+                X = card.X,
+                CustomURLName = card.CustomURLName,
+                CustomURL = card.CustomURL,
+            }).ToList();
+
+            // Map main card if present
+            UserCardDTO? mainCardDTO = null;
+            if (user.MainCard != null)
+            {
+                mainCardDTO = new UserCardDTO
+                {
+                    Id = user.MainCard.Id,
+                    DisplayName = user.MainCard.DisplayName,
+                    RoleName = user.MainCard.RoleName,
+                    BGColor = user.MainCard.BGColor,
+                    TextColor = user.MainCard.TextColor,
+                    Email = user.MainCard.Email,
+                    PhoneNumber = user.MainCard.PhoneNumber,
+                    LinkedIn = user.MainCard.LinkedIn,
+                    X = user.MainCard.X,
+                    CustomURLName = user.MainCard.CustomURLName,
+                    CustomURL = user.MainCard.CustomURL
+                };
+            }
+
+            UserDTO userDTO = new UserDTO()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FullName = user.FullName,
+                RoleName = user.RoleName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                MainCard = mainCardDTO,
+                Cards = cardDTOs ?? new List<UserCardDTO>()
+            };
+
+            return Ok(userDTO);
         }
 
         [HttpPost("login")]

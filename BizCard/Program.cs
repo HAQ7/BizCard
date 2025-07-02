@@ -14,19 +14,20 @@ builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICardService, CardService>();
 
-
 builder.Services.AddDbContext<AppDBcontext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB"));
 });
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+})
     .AddEntityFrameworkStores<AppDBcontext>();
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddJwtBearer(options =>
@@ -36,10 +37,8 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuer = true,
             ValidIssuer = jwtSettings["Issuer"],
-
             ValidateAudience = true,
             ValidAudience = jwtSettings["Audience"],
-
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(jwtSettings["Key"]!)),
@@ -60,13 +59,26 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-
 builder.Services.AddControllers();
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost5173",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
 app.UseRouting();
+
+// Use CORS middleware
+app.UseCors("AllowLocalhost5173");
 
 app.UseAuthentication();
 app.UseAuthorization();

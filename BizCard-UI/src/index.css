@@ -1,2 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Judson&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-judson: "Judson", sans-serif; 
+}

@@ -33,13 +33,14 @@ function App() {
           </NavLink>
         </nav>
       </header>
+    <div className="grid place-items-center">
 
-      <main className="flex flex-col items-center justify-center lg:grid lg:grid-cols-2 place-items-center gap-4  mt-10 overflow-hidden px-10 py-10">
-        <div className="flex flex-col gap-4 max-w-[500px] w-full">
-          <h1 className="font-bold sm:text-6xl text-4xl w-full">
+      <main className="flex flex-col items-center justify-center lg:grid lg:grid-cols-2 place-items-center lg:gap-4 gap-12 lg:mt-30 mt-10 overflow-hidden  max-w-[1600px] w-full">
+        <div className="flex flex-col 2xl:gap-12 gap-5 2xl:max-w-[1000px] max-w-[500px] w-full">
+          <h1 className="font-bold 2xl:text-8xl sm:text-6xl text-4xl w-full">
             Elegant Business Cards at Your Fingertips
           </h1>
-          <p className="w-full max-w-[500px] sm:text-lg text-sm text-[#3E3E3E]">
+          <p className="w-full max-w-[500px] 2xl:text-2xl sm:text-lg text-sm text-[#3E3E3E]">
             Design sleek, professional business cards in minutes. Choose a
             template, customize your details, and download or print — all in one
             place.
@@ -51,7 +52,7 @@ function App() {
             Get Started
           </NavLink>
         </div>
-        <div className="max-w-[500px] w-full p-4 -order-1 lg:order-1">
+        <div className="2xl:max-w-[600px] max-w-[500px] w-full p-4 -order-1 lg:order-1">
           <Swiper
             effect={"cards"}
             grabCursor={true}
@@ -68,7 +69,7 @@ function App() {
                 style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}
                 className="bg-white grid place-item-center rounded-xl"
               >
-                <div className="grid place-items-center p-10 py-16 text-center">
+                <div className="grid place-items-center p-10 2xl:py-20 sm:py-16 py-10 text-center">
                   <h1 className="sm:text-3xl text-xl font-bold ">
                     {card.name}
                   </h1>
@@ -81,6 +82,10 @@ function App() {
           </Swiper>
         </div>
       </main>
+      <section className="max-w-[1600px] w-full">
+
+      </section>
+    </div>
     </>
   );
 }

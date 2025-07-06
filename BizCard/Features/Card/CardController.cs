@@ -150,6 +150,15 @@ namespace BizCard.Features.Card
         [Authorize]
         public async Task<IActionResult> PutCard([FromForm] PutCardDTO putCardDTO, [FromRoute] string cardId)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToArray();
+                return BadRequest(string.Join('\n', errors));
+            }
+
             return Ok(await _cardService.PutCard(
                 new Card
                 {

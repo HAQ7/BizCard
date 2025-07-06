@@ -34,11 +34,11 @@ function App() {
                     </NavLink>
                 </nav>
             </header>
-            <div className="flex justify-center items-center gap-10 p-3">
-                <div className=" max-w-[1600px] w-full relative">
-                    <section className="flex flex-col items-center justify-center lg:grid lg:grid-cols-2 place-items-center lg:gap-4 gap-12 lg:mt-30 mt-10 overflow-hidden">
-                        <div className="flex flex-col 2xl:gap-12 gap-5 2xl:max-w-[1000px] max-w-[500px] w-full">
-                            <h1 className="font-bold 2xl:text-8xl sm:text-6xl text-4xl w-full">
+            <div className="flex justify-center items-center px-3 lg:text-start text-center">
+                <div className=" max-w-[1600px] w-full relative flex flex-col gap-40 lg:mt-30 mt-10">
+                    <section className="flex flex-col items-center justify-center lg:grid lg:grid-cols-2 place-items-center lg:gap-4 gap-12  overflow-hidden">
+                        <div className="flex flex-col 2xl:gap-12 gap-5 2xl:max-w-[1000px] max-w-[500px] w-full items-center lg:items-start">
+                            <h1 className="font-bold 2xl:text-8xl sm:text-6xl text-4xl w-full ">
                                 Elegant Business Cards at Your Fingertips
                             </h1>
                             <p className="w-full max-w-[500px] 2xl:text-2xl sm:text-lg text-sm text-[#3E3E3E]">
@@ -59,7 +59,7 @@ function App() {
                                 effect={"cards"}
                                 grabCursor={true}
                                 autoplay={{
-                                    delay: 2500,
+                                    delay: 1000,
                                     disableOnInteraction: false,
                                 }}
                                 modules={[EffectCards, Autoplay]}
@@ -87,7 +87,7 @@ function App() {
                             </Swiper>
                         </div>
                     </section>
-                    <section className="py-10">
+                    <section>
                         <div className="relative">
                             <div className="absolute w-10 h-full bg-gradient-to-r from-white to-transparent z-50" />
                             <div className="absolute w-10 right-0 h-full bg-gradient-to-r from-transparent to-white z-50" />
@@ -157,7 +157,7 @@ function App() {
                     </section>
                 </div>
             </div>
-            <footer className="mt-30 h-30 w bg-[#f8f7f7] grid place-items-center">
+            <footer className="mt-40 h-30 w bg-white shadow-2xl grid place-items-center">
                 {" "}
                 <img className="w-20" src={logo} />
             </footer>

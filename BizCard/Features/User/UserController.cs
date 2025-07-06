@@ -89,14 +89,31 @@ namespace BizCard.Features.User
         [HttpPost("login")]
         public async Task<IActionResult> PostLogin([FromForm] LoginDTO loginDTO)
         {
-            string token = await _userService.Login(loginDTO.username, loginDTO.password);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToArray();
+                return BadRequest(string.Join('\n', errors));
+            }
 
+            string token = await _userService.Login(loginDTO.username, loginDTO.password);
             return Ok(token);
         }
 
         [HttpPost("SignUp")]
         public async Task<IActionResult> PostSignUp([FromForm] SignUpDTO signUpDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToArray();
+                return BadRequest(string.Join('\n', errors));
+            }
+
             string token = await _userService.SignUp(
                 new User()
                 {

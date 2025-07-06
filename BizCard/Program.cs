@@ -4,6 +4,7 @@ using BizCard.Features.User;
 using BizCard.Features.User.helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -24,6 +25,10 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
 })
     .AddEntityFrameworkStores<AppDBcontext>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options
+    => options.SuppressModelStateInvalidFilter = true);
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -58,7 +63,6 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 
 // Add CORS services

@@ -67,7 +67,7 @@ namespace BizCard.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Cards");
+                    b.ToTable("Cards", (string)null);
                 });
 
             modelBuilder.Entity("BizCard.Features.User.User", b =>

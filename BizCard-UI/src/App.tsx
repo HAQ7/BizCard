@@ -93,7 +93,6 @@ function App() {
                             <div className="absolute w-10 right-0 h-full bg-gradient-to-r from-transparent to-white z-50" />
                             <InfiniteSlider
                                 className="py-5"
-                                speedOnHover={50}
                                 gap={24}
                             >
                                 {cards.map((card, index) => (
@@ -116,7 +115,6 @@ function App() {
                                 ))}
                             </InfiniteSlider>
                             <InfiniteSlider
-                                speedOnHover={50}
                                 className="pb-10 pt-5"
                                 reverse
                                 gap={24}

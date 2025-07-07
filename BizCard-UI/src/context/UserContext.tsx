@@ -1,22 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
+import type { User } from "../types/User";
 
-interface Card {
-    id: string;
-    displayName: string;
-    roleName: string;
-    BGColor: string; // Optional, if card has a background color
-    TextColor: string; // Optional, if card has a text color
-}
 
-interface User {
-    id: string;
-    email: string;
-    userName: string;
-    roleName: string;
-    cards?: Card[]; // Optional, if user has cards
-    mainCard?: Card; // Optional, if user has a main card
-}
+
 
 interface UserContextType {
     user: User | null;

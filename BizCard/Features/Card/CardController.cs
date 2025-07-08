@@ -19,7 +19,17 @@ namespace BizCard.Features.Card
             _cardService = cardService;
         }
 
+        /// <summary>
+        /// Retrieves a specific business card by its unique identifier.
+        /// </summary>
+        /// <param name="cardId">The unique identifier of the card to retrieve</param>
+        /// <returns>Returns the business card information including owner details</returns>
+        /// <response code="200">Successfully retrieved the card</response>
+        /// <response code="404">Card not found</response>
+        /// <produces>application/json</produces>
         [HttpGet("{cardId}")]
+        [ProducesResponseType(typeof(CardDTO), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetCard([FromRoute] string cardId)
         {
             Card card = await _cardService.GetCard(cardId);
@@ -51,8 +61,18 @@ namespace BizCard.Features.Card
             return Ok(cardDto);
         }
 
+        /// <summary>
+        /// Retrieves all business cards belonging to the authenticated user.
+        /// </summary>
+        /// <returns>Returns a list of all cards owned by the current user</returns>
+        /// <response code="200">Successfully retrieved the user's cards</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <response code="404">User not found</response>
+        /// <produces>application/json</produces>
         [HttpGet("cards")]
         [Authorize]
+        [ProducesResponseType(typeof(List<CardDTO>), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetCards()
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -91,7 +111,17 @@ namespace BizCard.Features.Card
             return Ok(cardDtos);
         }
 
+        /// <summary>
+        /// Retrieves the main business card for a specific user by their username.
+        /// </summary>
+        /// <param name="username">The username of the user whose main card to retrieve</param>
+        /// <returns>Returns the user's main business card information</returns>
+        /// <response code="200">Successfully retrieved the main card</response>
+        /// <response code="404">User or main card not found</response>
+        /// <produces>application/json</produces>
         [HttpGet("main/{username}")]
+        [ProducesResponseType(typeof(CardDTO), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetMainCard(string username)
         {
             Card card = await _cardService.GetMainCard(username);
@@ -124,8 +154,18 @@ namespace BizCard.Features.Card
             return Ok(cardDto);
         }
 
+        /// <summary>
+        /// Creates a new business card for the authenticated user.
+        /// </summary>
+        /// <returns>Returns a success message with the new card ID</returns>
+        /// <response code="200">Card created successfully</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <response code="404">User not found</response>
+        /// <produces>application/json</produces>
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> PostCard()
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -139,15 +179,57 @@ namespace BizCard.Features.Card
             return Ok(await _cardService.PostCard(userId));
         }
 
+        /// <summary>
+        /// Deletes a specific business card by its unique identifier.
+        /// </summary>
+        /// <param name="cardId">The unique identifier of the card to delete</param>
+        /// <returns>Returns a success message confirming deletion</returns>
+        /// <response code="200">Card deleted successfully</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <response code="404">Card not found or user doesn't have permission</response>
+        /// <produces>application/json</produces>
         [HttpDelete("{cardId}")]
         [Authorize]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> DeleteCard(string cardId)
         {
             return Ok(await _cardService.DeleteCard(cardId));
         }
 
+        /// <summary>
+        /// Updates an existing business card with new information.
+        /// </summary>
+        /// <param name="putCardDTO">The updated card information including display name, role, colors, contact details, and social links</param>
+        /// <param name="cardId">The unique identifier of the card to update</param>
+        /// <returns>Returns a success message confirming the update</returns>
+        /// <response code="200">Card updated successfully</response>
+        /// <response code="400">Invalid request - validation errors</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <response code="404">Card not found or user doesn't have permission</response>
+        /// <consumes>application/x-www-form-urlencoded</consumes>
+        /// <produces>application/json</produces>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /api/Card/{cardId}
+        ///     Content-Type: application/x-www-form-urlencoded
+        ///     
+        ///     DisplayName=John Doe&amp;RoleName=Software Developer&amp;BGColor=%23FF5733&amp;TextColor=%23FFFFFF&amp;Email=john@example.com&amp;PhoneNumber=1234567890&amp;LinkedIn=johndoe&amp;X=@johndoe&amp;CustomURLName=Portfolio&amp;CustomURL=https://johndoe.dev&amp;IsMain=true
+        /// 
+        /// All fields except IsMain are optional but must meet validation requirements:
+        /// - DisplayName: 3-100 characters
+        /// - RoleName: 3-100 characters  
+        /// - BGColor: 3-10 characters (hex color)
+        /// - TextColor: 3-10 characters (hex color)
+        /// - Email: 3-100 characters, valid email format
+        /// - PhoneNumber: 3-15 characters, valid phone format
+        /// </remarks>
         [HttpPut("{cardId}")]
         [Authorize]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> PutCard([FromForm] PutCardDTO putCardDTO, [FromRoute] string cardId)
         {
             if (!ModelState.IsValid)

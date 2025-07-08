@@ -18,8 +18,18 @@ namespace BizCard.Features.User
             _userService = userService;
         }
 
+        /// <summary>
+        /// Gets the current logged in user profile information from the JWT Token.
+        /// </summary>
+        /// <returns>Returns the user profile with their cards and main card information</returns>
+        /// <response code="200">Successfully retrieved user profile</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <response code="404">User not found</response>
+        /// <produces>application/json</produces>
         [Authorize]
         [HttpGet("me")]
+        [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetCurrentUser()
         {
             string? Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -86,7 +96,18 @@ namespace BizCard.Features.User
             return Ok(userDTO);
         }
 
+        /// <summary>
+        /// Authenticates a user using username and password credentials.
+        /// </summary>
+        /// <param name="loginDTO">Login credentials containing username and password</param>
+        /// <returns>Returns a JWT authentication token upon successful login</returns>
+        /// <response code="200">Login successful, returns JWT token</response>
+        /// <response code="400">Invalid request - validation errors or invalid credentials</response>
+        /// <consumes>application/x-www-form-urlencoded</consumes>
+        /// <produces>application/json</produces>
         [HttpPost("login")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> PostLogin([FromForm] LoginDTO loginDTO)
         {
             if (!ModelState.IsValid)
@@ -102,7 +123,27 @@ namespace BizCard.Features.User
             return Ok(token);
         }
 
+        /// <summary>
+        /// Creates a new user account and returns an authentication token.
+        /// </summary>
+        /// <param name="signUpDTO">User registration information including username, password, email, phone, full name, and role</param>
+        /// <returns>Returns a JWT authentication token upon successful registration</returns>
+        /// <response code="200">Registration successful, returns JWT token</response>
+        /// <response code="400">Invalid request - validation errors or user already exists</response>
+        /// <consumes>application/x-www-form-urlencoded</consumes>
+        /// <produces>application/json</produces>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST /api/User/SignUp
+        ///     Content-Type: application/x-www-form-urlencoded
+        ///     
+        ///     username=johndoe&amp;password=SecurePass123&amp;confirmPassword=SecurePass123&amp;Email=john@example.com&amp;Phone=1234567890&amp;FullName=John Doe&amp;RoleName=Developer
+        /// 
+        /// </remarks>
         [HttpPost("SignUp")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> PostSignUp([FromForm] SignUpDTO signUpDTO)
         {
             if (!ModelState.IsValid)
@@ -129,8 +170,37 @@ namespace BizCard.Features.User
             return Ok(token);
         }
 
+        /// <summary>
+        /// Retrieves user avatar information from avatarapi.com service using an email address.
+        /// </summary>
+        /// <param name="email">Email address to retrieve avatar for</param>
+        /// <returns>Returns avatar information including image URL and metadata</returns>
+        /// <response code="200">Successfully retrieved avatar information</response>
+        /// <response code="400">Invalid request - email parameter is missing</response>
+        /// <response code="401">Unauthorized - JWT token is missing or invalid</response>
+        /// <produces>application/json</produces>
+        /// <remarks>
+        /// Sample response:
+        /// 
+        ///     {
+        ///       "Name": "John Doe",
+        ///       "Image": "https://s3.avatarapi.com/fe975b72194e729e0883bab6f9d7e0d72c304fd2f28c9fe6a77afe840065aad7.gif",
+        ///       "Valid": true,
+        ///       "City": "New York",
+        ///       "Country": "USA",
+        ///       "IsDefault": false,
+        ///       "Success": true,
+        ///       "RawData": "",
+        ///       "Source": {
+        ///         "Name": "Microsoft"
+        ///       }
+        ///     }
+        /// 
+        /// </remarks>
         [HttpGet("avatar/{email}")]
         [Authorize]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> GetAvatar([FromRoute] string email)
         {
             if (email == null)

@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BizCard</name>
+    </assembly>
+    <members>
+        <member name="M:BizCard.Features.Card.CardController.GetCard(System.String)">
+            <summary>
+            Retrieves a specific business card by its unique identifier.
+            </summary>
+            <param name="cardId">The unique identifier of the card to retrieve</param>
+            <returns>Returns the business card information including owner details</returns>
+            <response code="200">Successfully retrieved the card</response>
+            <response code="404">Card not found</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.Card.CardController.GetCards">
+            <summary>
+            Retrieves all business cards belonging to the authenticated user.
+            </summary>
+            <returns>Returns a list of all cards owned by the current user</returns>
+            <response code="200">Successfully retrieved the user's cards</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <response code="404">User not found</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.Card.CardController.GetMainCard(System.String)">
+            <summary>
+            Retrieves the main business card for a specific user by their username.
+            </summary>
+            <param name="username">The username of the user whose main card to retrieve</param>
+            <returns>Returns the user's main business card information</returns>
+            <response code="200">Successfully retrieved the main card</response>
+            <response code="404">User or main card not found</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.Card.CardController.PostCard">
+            <summary>
+            Creates a new business card for the authenticated user.
+            </summary>
+            <returns>Returns a success message with the new card ID</returns>
+            <response code="200">Card created successfully</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <response code="404">User not found</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.Card.CardController.DeleteCard(System.String)">
+            <summary>
+            Deletes a specific business card by its unique identifier.
+            </summary>
+            <param name="cardId">The unique identifier of the card to delete</param>
+            <returns>Returns a success message confirming deletion</returns>
+            <response code="200">Card deleted successfully</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <response code="404">Card not found or user doesn't have permission</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.Card.CardController.PutCard(BizCard.Features.Card.DTOs.PutCardDTO,System.String)">
+            <summary>
+            Updates an existing business card with new information.
+            </summary>
+            <param name="putCardDTO">The updated card information including display name, role, colors, contact details, and social links</param>
+            <param name="cardId">The unique identifier of the card to update</param>
+            <returns>Returns a success message confirming the update</returns>
+            <response code="200">Card updated successfully</response>
+            <response code="400">Invalid request - validation errors</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <response code="404">Card not found or user doesn't have permission</response>
+            <consumes>application/x-www-form-urlencoded</consumes>
+            <produces>application/json</produces>
+            <remarks>
+            Sample request:
+            
+                PUT /api/Card/{cardId}
+                Content-Type: application/x-www-form-urlencoded
+                
+                DisplayName=John Doe&amp;RoleName=Software Developer&amp;BGColor=%23FF5733&amp;TextColor=%23FFFFFF&amp;Email=john@example.com&amp;PhoneNumber=1234567890&amp;LinkedIn=johndoe&amp;X=@johndoe&amp;CustomURLName=Portfolio&amp;CustomURL=https://johndoe.dev&amp;IsMain=true
+            
+            All fields except IsMain are optional but must meet validation requirements:
+            - DisplayName: 3-100 characters
+            - RoleName: 3-100 characters  
+            - BGColor: 3-10 characters (hex color)
+            - TextColor: 3-10 characters (hex color)
+            - Email: 3-100 characters, valid email format
+            - PhoneNumber: 3-15 characters, valid phone format
+            </remarks>
+        </member>
+        <member name="M:BizCard.Features.User.UserController.GetCurrentUser">
+            <summary>
+            Gets the current logged in user profile information from the JWT Token.
+            </summary>
+            <returns>Returns the user profile with their cards and main card information</returns>
+            <response code="200">Successfully retrieved user profile</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <response code="404">User not found</response>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.User.UserController.PostLogin(BizCard.Features.User.DTOs.LoginDTO)">
+            <summary>
+            Authenticates a user using username and password credentials.
+            </summary>
+            <param name="loginDTO">Login credentials containing username and password</param>
+            <returns>Returns a JWT authentication token upon successful login</returns>
+            <response code="200">Login successful, returns JWT token</response>
+            <response code="400">Invalid request - validation errors or invalid credentials</response>
+            <consumes>application/x-www-form-urlencoded</consumes>
+            <produces>application/json</produces>
+        </member>
+        <member name="M:BizCard.Features.User.UserController.PostSignUp(BizCard.Features.User.DTOs.SignUpDTO)">
+            <summary>
+            Creates a new user account and returns an authentication token.
+            </summary>
+            <param name="signUpDTO">User registration information including username, password, email, phone, full name, and role</param>
+            <returns>Returns a JWT authentication token upon successful registration</returns>
+            <response code="200">Registration successful, returns JWT token</response>
+            <response code="400">Invalid request - validation errors or user already exists</response>
+            <consumes>application/x-www-form-urlencoded</consumes>
+            <produces>application/json</produces>
+            <remarks>
+            Sample request:
+            
+                POST /api/User/SignUp
+                Content-Type: application/x-www-form-urlencoded
+                
+                username=johndoe&amp;password=SecurePass123&amp;confirmPassword=SecurePass123&amp;Email=john@example.com&amp;Phone=1234567890&amp;FullName=John Doe&amp;RoleName=Developer
+            
+            </remarks>
+        </member>
+        <member name="M:BizCard.Features.User.UserController.GetAvatar(System.String)">
+            <summary>
+            Retrieves user avatar information from avatarapi.com service using an email address.
+            </summary>
+            <param name="email">Email address to retrieve avatar for</param>
+            <returns>Returns avatar information including image URL and metadata</returns>
+            <response code="200">Successfully retrieved avatar information</response>
+            <response code="400">Invalid request - email parameter is missing</response>
+            <response code="401">Unauthorized - JWT token is missing or invalid</response>
+            <produces>application/json</produces>
+            <remarks>
+            Sample response:
+            
+                {
+                  "Name": "John Doe",
+                  "Image": "https://s3.avatarapi.com/fe975b72194e729e0883bab6f9d7e0d72c304fd2f28c9fe6a77afe840065aad7.gif",
+                  "Valid": true,
+                  "City": "New York",
+                  "Country": "USA",
+                  "IsDefault": false,
+                  "Success": true,
+                  "RawData": "",
+                  "Source": {
+                    "Name": "Microsoft"
+                  }
+                }
+            
+            </remarks>
+        </member>
+        <member name="T:BizCard.Migrations.databasereset">
+            <inheritdoc />
+        </member>
+        <member name="M:BizCard.Migrations.databasereset.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BizCard.Migrations.databasereset.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BizCard.Migrations.databasereset.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

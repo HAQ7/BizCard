@@ -1,5 +1,4 @@
 import {
-  CircleArrowRightIcon,
   CornerRightUpIcon,
   GlobeIcon,
   LinkedinIcon,
@@ -14,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Card } from "@/types/Card";
+import { useUser } from "@/context/UserContext";
 
 export default function Card({
   card,
@@ -44,7 +44,7 @@ export default function Card({
             color: card.textColor,
           }}
           className={`absolute inset-0 backface-hidden grid place-items-center shadow-card rounded-xl transition-all text-center ${
-            isClickable && "cursor-pointer hover:scale-105"
+            isClickable && "cursor-pointer hover:shadow-lg"
           }`}
         >
           {!isClickable && (
@@ -64,7 +64,7 @@ export default function Card({
               </Tooltip>
             </div>
           )}
-          <div>
+          <div>            
             <h2 className="text-2xl font-bold">{card.displayName}</h2>
             <p className="text-md font-judson">{card.roleName}</p>
             {isMain && (
@@ -114,50 +114,50 @@ export default function Card({
                   </Tooltip>
                 </div>
                 {card.phoneNumber && (
-                <div>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <a href={"tel:" + card.phoneNumber}>
-                        <PhoneIcon
-                          size={24}
-                          className="text-gray-300 cursor-pointer"
-                        />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>Phone</TooltipContent>
-                  </Tooltip>
-                </div>
-                  )}
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <a href={"tel:" + card.phoneNumber}>
+                          <PhoneIcon
+                            size={24}
+                            className="text-gray-300 cursor-pointer"
+                          />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>Phone</TooltipContent>
+                    </Tooltip>
+                  </div>
+                )}
                 {card.linkedIn && (
-                <div>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <a href={card.linkedIn}>
-                        <LinkedinIcon
-                          size={24}
-                          className="text-gray-300 cursor-pointer"
-                        />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>LinkedIn</TooltipContent>
-                  </Tooltip>
-                </div>
-                  )}
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <a href={card.linkedIn}>
+                          <LinkedinIcon
+                            size={24}
+                            className="text-gray-300 cursor-pointer"
+                          />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>LinkedIn</TooltipContent>
+                    </Tooltip>
+                  </div>
+                )}
                 {card.x && (
-                <div>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <a href={card.x}>
-                        <XIcon
-                          size={24}
-                          className="text-gray-300 cursor-pointer"
-                        />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>X</TooltipContent>
-                  </Tooltip>
-                </div>
-                  )}
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <a href={card.x}>
+                          <XIcon
+                            size={24}
+                            className="text-gray-300 cursor-pointer"
+                          />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>X</TooltipContent>
+                    </Tooltip>
+                  </div>
+                )}
                 {card.customURL && card.customURLName && (
                   <div>
                     <Tooltip>

@@ -10,10 +10,22 @@ import {
 } from "lucide-react";
 import Card from "../../components/Card";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
+
+type UserImage = {
+  Image: string
+}
 
 export default function MyCardsPage() {
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
+  const [userImage, setUserImage] = useState({} as UserImage);
+  const [loadingUserImage, setLoadingUserImage] = useState(true);
 
   const handleDeleteCard = async (cardId: string, cardTitle?: string) => {
     if (
@@ -62,11 +74,66 @@ export default function MyCardsPage() {
     });
   };
 
+  useEffect(() => {
+    const getUserAvatar = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        navigate("/auth?type=login");
+        return;
+      }
+
+      // Check if user image is cached in localStorage
+      const cachedImageKey = `userAvatar_${user?.email}`;
+      const cachedImage = localStorage.getItem(cachedImageKey);
+      
+      if (cachedImage) {
+        try {
+          const parsedImage = JSON.parse(cachedImage);
+          setUserImage(parsedImage);
+          setLoadingUserImage(false);
+          return;
+        } catch (error) {
+          // If parsing fails, remove the corrupted cache and fetch fresh
+          localStorage.removeItem(cachedImageKey);
+        }
+      }
+
+      // Fetch user image from API if not cached
+      const response = await fetch(
+        "http://localhost:5280/api/user/avatar/" + user?.email,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const userImage = await response.json();
+        setUserImage(userImage);
+        // Cache the user image in localStorage
+        localStorage.setItem(cachedImageKey, JSON.stringify(userImage));
+        setLoadingUserImage(false);
+      } else {
+        toast.error("Failed to fetch user image. Please log in again.");
+        setLoadingUserImage(false);
+      }
+    };
+
+    getUserAvatar();
+  }, []);
+
   return (
     <>
       <header className="flex justify-between items-center m-2 mx-4">
         <div className="flex items-center">
-          <UserCircleIcon size={50} />
+          {loadingUserImage ? (
+            <LoaderCircleIcon className="animate-spin" size={50} />
+          ) : userImage ? (
+            <img src={userImage.Image} className="w-12 aspect-square rounded-full" />
+          ) : (
+            <UserCircleIcon size={50} />
+          )}
           <div className="ml-2">
             <div>{user?.userName}</div>
             <span className="text-sm text-gray-500">({user?.roleName})</span>
@@ -117,13 +184,16 @@ export default function MyCardsPage() {
                 <NavLink to={`/card/${card.id}`} className="block">
                   <Card card={card} />
                 </NavLink>
-                <button
-                  onClick={() => handleDeleteCard(card.id, card.displayName)}
-                  className="absolute top-2 right-2 p-2 text-gray-500 hover:text-gray-800 rounded-full cursor-pointer transition-color z-10"
-                  title="Delete card"
-                >
-                  <TrashIcon size={16} />
-                </button>
+                <Tooltip>
+                  <TooltipTrigger
+                    onClick={() => handleDeleteCard(card.id, card.displayName)}
+                    className="absolute top-2 right-2 p-2 text-gray-500 hover:text-gray-800 rounded-full cursor-pointer transition-color z-10"
+                    title="Delete card"
+                  >
+                    <TrashIcon size={16} />
+                  </TooltipTrigger>
+                  <TooltipContent>Delete card</TooltipContent>
+                </Tooltip>
               </div>
             );
           })}
@@ -159,7 +229,7 @@ export default function MyCardsPage() {
                 error: "Failed to create card.",
               });
             }}
-            className="max-w-[400px] w-full h-42 grid place-items-center border-2 rounded-lg border-dashed border-gray-500 text-center cursor-pointer text-gray-500 hover:bg-gray-50 transition-all hover:scale-105 font-semibold"
+            className="max-w-[400px] w-full h-42 grid place-items-center border-2 rounded-lg border-dashed border-gray-500 text-center cursor-pointer text-gray-500 hover:bg-gray-50 transition-all font-semibold"
           >
             <div className="grid place-items-center">
               <PlusCircleIcon />

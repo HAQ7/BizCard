@@ -39,7 +39,7 @@ function CardPage() {
     x: "",
     customURL: "",
     customURLName: "",
-    isMain: false,
+    isMain: !!params.username,
   });
 
   const [focusedField, setFocusedField] = useState("");
@@ -96,7 +96,7 @@ function CardPage() {
           x: data.x || "",
           customURL: data.customURL || "",
           customURLName: data.customURLName || "",
-          isMain: data.isMain || false,
+          isMain: !!params.username,
         });
       } catch (error) {
         console.error("Error fetching card:", error);
@@ -107,7 +107,7 @@ function CardPage() {
     };
 
     fetchMainCard();
-  }, [params.username]);
+  }, [params.username, params.cardId]);
 
   const validateField = (name: string, value: string | boolean) => {
     let error = "";
@@ -403,7 +403,7 @@ function CardPage() {
       formData.x !== (originalCard.x || "") ||
       formData.customURL !== (originalCard.customURL || "") ||
       formData.customURLName !== (originalCard.customURLName || "") ||
-      formData.isMain !== ((originalCard as any).isMain || false)
+      formData.isMain !== (!!params.username)
     );
   };
 

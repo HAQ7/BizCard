@@ -10,5 +10,7 @@
 
         public Task<User> GetUserByUsername(string username);
 
+        public Task<string> GetAvatar(string email);
+
     }
 }

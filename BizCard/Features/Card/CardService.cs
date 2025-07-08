@@ -111,6 +111,11 @@ namespace BizCard.Features.Card
                 updatedCard.Owner.MainCard = updatedCard;
             }
 
+            if (!isMain && updatedCard.Owner.MainCardId == updatedCard.Id)
+            {
+                updatedCard.Owner.MainCard = null;
+            }
+
             await _db.SaveChangesAsync();
 
             return updatedCard.Id;

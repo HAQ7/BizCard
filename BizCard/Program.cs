@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICardService, CardService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
+
 
 builder.Services.AddDbContext<AppDBcontext>(options =>
 {

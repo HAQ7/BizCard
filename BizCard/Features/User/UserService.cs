@@ -2,6 +2,7 @@
 using BizCard.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace BizCard.Features.User
 {
@@ -11,13 +12,17 @@ namespace BizCard.Features.User
         private readonly UserManager<User> _userManager;
         private readonly IJWTService _jwtService;
         private readonly AppDBcontext _db;
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-        public UserService(SignInManager<User> signInManager, UserManager<User> userManager, IJWTService jwtService, AppDBcontext db)
+        public UserService(SignInManager<User> signInManager, UserManager<User> userManager, IJWTService jwtService, AppDBcontext db, HttpClient httpClient, IConfiguration configuration)
         {
             _jwtService = jwtService;
             _signInManager = signInManager;
             _userManager = userManager;
             _db = db;
+            _httpClient = httpClient;
+            _configuration = configuration;
         }
 
         public async Task<string> Login(string username, string password)
@@ -87,6 +92,30 @@ namespace BizCard.Features.User
                 throw new HTTPException(404, "User not found");
             }
             return user;
+        }
+
+        public async Task<string> GetAvatar(string email)
+        {
+
+            string url = "https://avatarapi.com/v2/api.aspx";
+            string plainTextBody = $"{{\"username\":\"{_configuration["Avatar:UserName"]}\",\"password\":\"{_configuration["Avatar:Password"]}\",\"email\":\"{email}\"}}";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(plainTextBody, Encoding.UTF8, "text/plain")
+            };
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+
+            string error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Request failed: {response.StatusCode}, {error}");
+
+
         }
     }
 }

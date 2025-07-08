@@ -128,5 +128,17 @@ namespace BizCard.Features.User
             );
             return Ok(token);
         }
+
+        [HttpGet("avatar/{email}")]
+        [Authorize]
+        public async Task<IActionResult> GetAvatar([FromRoute] string email)
+        {
+            if (email == null)
+            {
+                return BadRequest("email is missing");
+            }
+
+            return Ok(await _userService.GetAvatar(email));
+        }
     }
 }
